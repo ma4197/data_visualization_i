@@ -154,11 +154,75 @@ weather_df %>%
 ```
 
 ```{r}
-ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
-  geom_smooth(se = FALSE) 
+weather_df %>%
+  ggplot(aes(x = date, y = tmax,color= name)) + 
+  geom_point(aes(size= prcp),alpha = 0.3)+
+  geom_hex()
 ```
 ##Odds and Ends
 ```{r}
 ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
   geom_smooth(se = FALSE) 
 ```
+## Univariate pltos
+Histograms, density plots, boxplots, violins...
+
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmax))+
+  geom_histogram()
+```
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmax, color=name))+
+  geom_histogram()
+```
+Fill the bars with assigned color
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmax, fill=name))+
+  geom_histogram()
+```
+Density Plots
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmax, color=name))+
+  geom_density()
+```
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmax, fill=name))+
+  geom_density(alpha=0.3)
+```
+
+Boxplots
+```{r}
+weather_df %>%
+  ggplot (aes(y=tmax))+
+  geom_boxplot()
+```
+
+```{r}
+weather_df %>%
+  ggplot (aes(y=tmax, x =name, fill =name))+
+  geom_boxplot()
+```
+
+Violin Plots
+```{r}
+weather_df %>%
+  ggplot (aes(x= name, y = tmax, fill=name))+
+  geom_violin()
+```
+
+OR
+
+Density Ridges Plots
+```{r}
+weather_df %>%
+  ggplot (aes(x= tmax, y = name))+
+  geom_density_ridges()
+```
+
+##Saving and Embedding Plots
+
