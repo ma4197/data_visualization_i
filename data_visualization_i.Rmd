@@ -90,3 +90,75 @@ weather_df %>%
   geom_point(aes(color = name))+
   geom_smooth (aes(color=name))
 ```
+
+
+```{r}
+weather_df %>%
+  ggplot(aes(x = tmin, y = tmax, color= name)) + 
+  geom_point(alpha = 0.3)+
+  geom_smooth (se= FALSE)
+```
+Maybe make seperate plots
+```{r}
+weather_df %>%
+  ggplot(aes(x = tmin, y = tmax, color= name)) + 
+  geom_point(alpha = 0.3)+
+  geom_smooth (se= FALSE)+
+  facet_grid(.~name)
+```
+'tmax' vs 'tmin' is boring, lets spice it up
+```{r}
+weather_df %>%
+  ggplot(aes(x = date, y = tmax,color= name)) + 
+    geom_point ()+ 
+  geom_point(alpha = 0.3)+
+  geom_smooth (se= FALSE)+
+  facet_grid(.~name)
+```
+Percipitation coloring
+```{r}
+weather_df %>%
+  ggplot(aes(x = date, y = tmax,color= prcp)) + 
+    geom_point ()+ 
+  geom_point(alpha = 0.3)+
+  geom_smooth (se= FALSE)+
+  facet_grid(.~name)
+```
+```{r}
+weather_df %>%
+  ggplot(aes(x = date, y = tmax,color= name)) + 
+  geom_point(aes(size= prcp),alpha = 0.3)+
+  geom_smooth (se= FALSE)+
+  facet_grid(.~name)
+```
+Fix the axises
+```{r}
+weather_df %>%
+  ggplot(aes(x = date, y = tmax,color= name)) + 
+  geom_point(aes(size= prcp),alpha = 0.3)+
+  geom_smooth (se= FALSE)+
+  facet_grid(.~name)+
+  theme (axis.text.x = element_text(angle =90, vjust =0.5, hjust= 1))
+```
+
+Some Quick Stuff
+```{r}
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32) %>% 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) +
+  geom_point(alpha = .5) + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_smooth(se = FALSE) 
+```
+##Odds and Ends
+```{r}
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_smooth(se = FALSE) 
+```
