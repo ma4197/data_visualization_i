@@ -10,10 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-
-```
-
-```{r}
 library(tidyverse)
 library(patchwork)
 ```
@@ -167,15 +163,111 @@ ggplot_weather +
 
 ##Data Argument in geom_
 ```{r}
-central_park = 
+central_park_df = 
   weather_df %>% 
   filter(name == "CentralPark_NY")
 
-waikiki = 
+waikiki_df= 
   weather_df %>% 
   filter(name == "Waikiki_HA")
 
-ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) + 
-  geom_point() + 
-  geom_line(data = central_park)
+ggplot(data = waikiki_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point() 
 ```
+
+```{r}
+central_park_df = 
+  weather_df %>% 
+  filter(name == "CentralPark_NY")
+
+waikiki_df= 
+  weather_df %>% 
+  filter(name == "Waikiki_HA")
+
+ggplot(data = waikiki_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_line(data = central_park_df)
+```
+
+##Patchwork
+
+```{r}
+tmax_tmin_p = 
+  weather_df %>% 
+  ggplot(aes(x = tmax, y = tmin, color = name)) + 
+  geom_point(alpha = .5) +
+  theme(legend.position = "none")
+
+prcp_dens_p = 
+  weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) + 
+  geom_density(alpha = .5) + 
+  theme(legend.position = "none")
+
+seasonality_plot = 
+  weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "bottom")
+
+(tmax_tmin_p + prcp_dens_p) / seasonality_plot
+```
+##Data Manipulation
+```{r}
+weather_df %>%
+  ggplot(aes( x= name, y =tmax)) +
+  geom_boxplot ()
+```
+
+```{r}
+weather_df %>%
+  mutate(name = fct_relevel(name, "Wakiki_HA")) %>% 
+  ggplot(aes( x= name, y =tmax)) +
+  geom_boxplot ()
+```
+```{r}
+weather_df %>%
+  mutate(name = fct_reorder(name, tmax)) %>% 
+  ggplot(aes( x= name, y =tmax)) +
+  geom_boxplot ()
+```
+
+```{r}
+pulse_df =
+  haven :: read_sas ("data/public_pulse_data.sas7bdat") %>% 
+  janitor :: clean_names()
+pivot_longer(
+  bdi_score_bl:bdi_score_12m,
+  name_to= "visit",
+  values_to = "bdi",
+  values_prefix = "bdi_score"
+) %>% 
+  select (id, visit, everything ())
+
+pulse_df %>% 
+  ggplot( aes(x= visit, y= bdi))+
+  geom_boxplot 
+```
+
+```{r}
+pulse_data = 
+  haven::read_sas("./data/public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  select(id, visit, everything()) %>%
+  mutate(
+    visit = recode(visit, "bl" = "00m"),
+    visit = factor(visit, levels = str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+
+ggplot(pulse_data, aes(x = visit, y = bdi)) + 
+  geom_boxplot()
+```
+
+
