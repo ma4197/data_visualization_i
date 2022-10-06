@@ -193,7 +193,61 @@ weather_df %>%
   mutate(
     mean_tmax = mean(tmax, na.rm = TRUE),
     centered_tmax = tmax - mean_tmax) %>% 
+  view
+```
+
+```{r}
+weather_df %>%
+  group_by(name) %>%
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax) %>% 
   ggplot(aes(x = date, y = centered_tmax, color = name)) + 
     geom_point() 
+```
+
+##Window Functions
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  mutate(temp_ranking = min_rank(tmax))
+```
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  filter(min_rank(tmax) < 2)
+```
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  filter(min_rank(desc(tmax)) < 4)
+```
+
+```{r}
+weather_df %>%
+  group_by(name) %>%
+  mutate(temp_change = tmax - lag(tmax))
+```
+
+```{r}
+weather_df %>%
+  group_by(name) %>%
+  mutate(temp_change = tmax - lag(tmax)) %>%
+  summarize(
+    temp_change_sd = sd(temp_change, na.rm = TRUE),
+    temp_change_max = max(temp_change, na.rm = TRUE))
+```
+
+
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  mutate(
+  tmax_rank = min_rank(tmax)) %>% 
+  filter(tmax_rank <4) %>% 
+  arrange(name, month, tmax_rank)
 ```
 
